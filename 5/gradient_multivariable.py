@@ -1,23 +1,46 @@
-from sympy import *
 import numpy
 
-x,y = symbols('x y')
-
 class Mult_gradient:
-    def __init__(self):
-        pass
+    def __init__(self, cuadratic_matrix, lineal_vector, alpha, h, treshold):
+        self.cuadratic = cuadratic_matrix
+        self.lineal = lineal_vector
+        self.alpha = alpha
+        self.h = h
+        self.treshold = treshold
 
-def function(x1,y1):
-    x0 = numpy.matrix([1,3])
+    def gradient(self, initial_values):
+        while True:
+            derivative = self.calculate_derivative(initial_values)
+            initial_values = initial_values - self.alpha * derivative
+            if(numpy.max(derivative) < self.treshold): break
+        return initial_values
+    
+    def calculate_derivative(self, initial_values):
+        fx = self.function(initial_values)
+        diagonal = numpy.diag(numpy.full(initial_values.shape[0], self.h))
 
-    values = numpy.matrix([[2,1],[1,20]])
+        inputs = initial_values.T + diagonal
 
-    print(x0.T.shape)
-    print(values.shape)
+        return numpy.matrix([[self.derivative(fx, inp.T)] for inp in inputs])
 
-    print(x0.dot(values).dot(x0.T))
+    def derivative(self, fx, fxh):
+        return (self.function(fxh) - fx)/self.h
+
+    def function(self, variable_vector):
+        cuadratic = variable_vector.T.dot(self.cuadratic).dot(variable_vector) * 0.5
+
+        lineal = self.lineal.T.dot(variable_vector)
+
+        return numpy.sum(cuadratic + lineal)
 
 if __name__ == "__main__":
-    initial_values = numpy.matrix([1,3])
-    print(initial_values.shape)
-    function(1,3)
+
+    initial_values = numpy.matrix([[5],[1]])
+    cuadratic = numpy.matrix([[2,1],[1,20]])
+    lineal =   numpy.matrix([[-5],[-3]])
+    
+    gradient = Mult_gradient(cuadratic, lineal, .01, .01, .00000001)
+    
+    print(gradient.gradient(initial_values))
+
+
