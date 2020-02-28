@@ -24,22 +24,18 @@ XForPred = [xForPred, xForPred**2, xForPred**3, xForPred**4, xForPred**5, xForPr
 epsilon = numpy.random.normal(0, std, (len(x))) 
 
 y = m * x + b + epsilon
-
+lambd = 10
 def hc_function(thetas):
     global couter
     global result
     couter = couter + 1
-    result = sum((y - numpy.dot(thetas[0:-1],X) - thetas[-1])**2)
-    if(couter == 1): 
-        print(thetas)
-        print(result)
-        print(y)
-        print( - numpy.dot(thetas[0:-1],X) - thetas[-1])
+    result = sum((y - numpy.dot(thetas[0:-1],X) - thetas[-1])**2) + lambd*(sum(thetas**2))
+    if(couter == 1): print(result)
     if(couter % 80000 == 0): 
         print(result)
         print(couter)
     #print(sum((y - numpy.dot(thetas[0:-1],X) - thetas[-1])**2))
-    return sum((y - numpy.dot(thetas[0:-1],X) - thetas[-1])**2)
+    return sum((y - numpy.dot(thetas[0:-1],X) - thetas[-1])**2) + lambd*(sum(thetas**2))
 
 #gradient = Mult_gradient(hc_function, .00000000000036455, .0001, .001)
 #alphas = numpy.linspace(.00000000000036455 ,.000000000001, 1)

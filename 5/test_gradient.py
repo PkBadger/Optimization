@@ -14,10 +14,10 @@ class Mult_gradient:
         counter = 0
         while True:
             derivative = self.calculate_derivative(initial_values)
-            #print(derivative)
             initial_values = initial_values - self.alpha * derivative
-            if(numpy.max(derivative) < self.treshold): break
-            if counter > 100: break
+            if(abs(numpy.max(derivative)) < self.treshold): break
+            if counter > 70000: 
+                break
             counter = counter + 1
         return numpy.asarray(initial_values.T)[0]
     
